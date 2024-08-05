@@ -26,12 +26,20 @@ This GitHub repository is not just a portfolio of my skills but also a roadmap f
 Feel free to explore the projects, watch the corresponding videos on my YouTube channel, and read my blogs on Medium or DevTo. You can also connect with me on LinkedIn and Instagram profiles and visit my website for more insights into my work and collaborations, you can also send me an email.
 
 <a href="https://fullstackfusions.com" target="_blank"><img src="assets/logo.png" alt="Logo" height="20"> FullStackFusions Website</a>
+<br />
 <a href="https://www.linkedin.com/in/fullstackfusions/" target="_blank"><img src="assets/linkedin.png" alt="Logo" height="20"> LinkedIn</a>
+<br />
 <a href="https://github.com/fullstackfusions" target="_blank"><img src="assets/github.png" alt="Logo" height="20"> GitHub</a>
+<br />
 <a href="https://www.youtube.com/@fullstackfusions" target="_blank"><img src="assets/youtube.png" alt="Logo" height="20"> YouTube</a>
+<br />
 <a href="https://www.instagram.com/fullstackfusions/" target="_blank"><img src="assets/instagram.png" alt="Logo" height="20"> Instagram</a>
+<br />
 <a href="medium.com/@fullstackfusions" target="_blank"><img src="assets/medium.png" alt="Logo" height="20"> Medium</a>
+<br />
 <a href="https://dev.to/fullstackfusions" target="_blank"><img src="assets/dev.png" alt="Logo" height="20"> DevTo</a>
+<br />
 <a href="mailto:fullstackfusions@gmail.com" target="_blank"><img src="assets/email.png" alt="Logo" height="20"> Email Me</a>
+<br />
 
 Thank you for visiting, and happy coding!
