@@ -25,21 +25,13 @@ This GitHub repository is not just a portfolio of my skills but also a roadmap f
 
 Feel free to explore the projects, watch the corresponding videos on my YouTube channel, and read my blogs on Medium or DevTo. You can also connect with me on LinkedIn and Instagram profiles and visit my website for more insights into my work and collaborations, you can also send me an email.
 
-<a href="https://fullstackfusions.com" target="_blank"><img src="assets/logo.png" alt="Logo" height="15"> Website</a>
-<br />
-<a href="https://www.linkedin.com/in/fullstackfusions/" target="_blank"><img src="assets/linkedin.png" alt="LinkedIN" height="15"> LinkedIn</a>
-<br />
-<a href="https://github.com/fullstackfusions" target="_blank"><img src="assets/github.png" alt="GitHub" height="15"> GitHub</a>
-<br />
-<a href="https://www.youtube.com/@fullstackfusions" target="_blank"><img src="assets/youtube.png" alt="YouTube" height="15"> YouTube</a>
-<br />
-<a href="https://www.instagram.com/fullstackfusions/" target="_blank"><img src="assets/instagram.png" alt="Instagram" height="15"> Instagram</a>
-<br />
-<a href="medium.com/@fullstackfusions" target="_blank"><img src="assets/medium.png" alt="Medium" height="15"> Medium</a>
-<br />
-<a href="https://dev.to/fullstackfusions" target="_blank"><img src="assets/dev.png" alt="DevTo" height="15"> DevTo</a>
-<br />
-<a href="mailto:fullstackfusions@gmail.com" target="_blank"><img src="assets/email.png" alt="Email" height="15"> Email Me</a>
-<br />
+<a href="https://fullstackfusions.com" target="_blank" title="Visit my website"><img src="assets/logo.png" alt="Logo" height="30"></a>&nbsp;&nbsp;
+<a href="https://www.linkedin.com/in/fullstackfusions/" target="_blank" title="Connect with me on LinkedIn"><img src="assets/linkedin.png" alt="LinkedIn" height="30"></a>&nbsp;&nbsp;
+<a href="https://github.com/fullstackfusions" target="_blank" title="Check out my GitHub"><img src="assets/github.png" alt="GitHub" height="30"></a>&nbsp;&nbsp;
+<a href="https://www.youtube.com/@fullstackfusions" target="_blank" title="Subscribe to my YouTube channel"><img src="assets/youtube.png" alt="YouTube" height="30"></a>&nbsp;&nbsp;
+<a href="https://www.instagram.com/fullstackfusions/" target="_blank" title="Follow me on Instagram"><img src="assets/instagram.png" alt="Instagram" height="30"></a>&nbsp;&nbsp;
+<a href="https://medium.com/@fullstackfusions" target="_blank" title="Read my blogs on Medium"><img src="assets/medium.png" alt="Medium" height="30"></a>&nbsp;&nbsp;
+<a href="https://dev.to/fullstackfusions" target="_blank" title="Read my blogs on Dev.to"><img src="assets/dev.png" alt="DevTo" height="30"></a>&nbsp;&nbsp;
+<a href="mailto:fullstackfusions@gmail.com" target="_blank" title="Send me an email"><img src="assets/email.png" alt="Email" height="30"></a>
 
 Thank you for visiting, and happy coding!
