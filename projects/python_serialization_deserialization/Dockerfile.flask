@@ -1,0 +1,17 @@
+# Dockerfile for Flask Service
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install required dependencies
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the Flask application
+COPY flask_service.py /app/flask_service.py
+
+# Expose Flask service on port 5000
+EXPOSE 5001
+
+# Start Flask service
+CMD ["python", "flask_service.py"]
