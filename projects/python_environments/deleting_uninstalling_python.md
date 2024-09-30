@@ -12,5 +12,7 @@ simply delete the application center
 
 ### Approach-3: Find the python versions
 
-use `where python` command to find where are the python versions located
-and then delete them using sudo request like approach 2
+use
+`where python` # on Windows
+`which python` # on Linux/Mac
+command to find where are the python versions located and then delete them using sudo request like approach 2
