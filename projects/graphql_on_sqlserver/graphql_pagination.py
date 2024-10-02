@@ -4,6 +4,7 @@ The example shows how to implement offset-based pagination in a GraphQL API, all
 
 """
 
+# pip install strawberry-graphql fastapi pyodbc
 
 import pyodbc
 import strawberry

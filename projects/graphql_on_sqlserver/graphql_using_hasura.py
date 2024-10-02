@@ -58,16 +58,20 @@ def loop():
 
     while True:
         response = get_paginated_response(limit, offset)
-        if not response:
+        data = response.json()
+        data_list = data['data']['your_table_name']
+        
+        if not data_list:
             break
 
-        data = response.json()
         offset += limit
 
         # The following logic is to store data in file, you can also use s3 bucket connection using boto3 to store data into s3 bucket
         file_name = f"offset_{offset}_hasura_response.json"
         with open(file_name, "a") as f:
-            f.write(json.dumps(data, indent=4))
+            for item in data_list:
+                # Convert each item to JSON format and append to the file
+                f.write(json.dumps(item, indent=4) + '\n')
 
 if __name__ == "__main__":
     loop()
