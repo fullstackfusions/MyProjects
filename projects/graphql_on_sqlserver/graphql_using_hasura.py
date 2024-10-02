@@ -31,7 +31,7 @@ def get_paginated_response(limit, offset):
 
     # Encode the username and password for Basic Authentication
     auth_string = f"{username}:{password}"
-    encoded_auth_string = base64.b64encode(auth_string.encode('utf-8')).decode('utf-8')
+    encoded_auth_string = base64.b64encode(auth_string.encode("utf-8")).decode("utf-8")
 
     headers = {
         "content-type": "application/json",
@@ -59,7 +59,7 @@ def loop():
     while True:
         response = get_paginated_response(limit, offset)
         data = response.json()
-        data_list = data['data']['your_table_name']
+        data_list = data["data"]["your_table_name"]
         
         if not data_list:
             break
@@ -71,7 +71,7 @@ def loop():
         with open(file_name, "a") as f:
             for item in data_list:
                 # Convert each item to JSON format and append to the file
-                f.write(json.dumps(item, indent=4) + '\n')
+                f.write(json.dumps(item, indent=4) + "\n")
 
 if __name__ == "__main__":
     loop()

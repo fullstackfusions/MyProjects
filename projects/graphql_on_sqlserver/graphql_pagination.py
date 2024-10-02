@@ -14,11 +14,11 @@ from typing import List
 
 # Database connection function
 def get_connection():
-    server = 'your_server_name'
-    database = 'your_database_name'
-    username = 'your_username'
-    password = 'your_password'
-    connection_url = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
+    server = "your_server_name"
+    database = "your_database_name"
+    username = "your_username"
+    password = "your_password"
+    connection_url = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}"
     conn = pyodbc.connect(connection_url)
     return conn
 
