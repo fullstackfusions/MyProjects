@@ -1,0 +1,4 @@
+--index-url https://enterpriseartifactory/simple
+--extra-index-url https://enterpriseartifactory/pypi/simple
+--extra-index-url https://enterpriseartifactory/pypi-public/simple
+-r requirements/tools.txt
