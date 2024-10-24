@@ -1,0 +1,6 @@
+importlib_metadata
+importlib_resources
+wheel
+setuptools
+setuptools_scm[toml]
+twine

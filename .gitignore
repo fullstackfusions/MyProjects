@@ -1,3 +1,60 @@
 .DS_Store
 .env
 code: `#fbff00`
+
+# pyenv
+.python-version
+
+# Environments
+creds.md
+creds/
+.env
+.env*
+**/.env/
+**/venv/
+**/venv*/
+.venv
+env/
+/venv/
+/venv*/
+ENV/
+env.bak/
+venv.bak/
+**/fastml/
+**/site-packages
+/site-packages
+**/node_modules
+/node_modules
+
+# testing
+/coverage
+
+# Windows rules
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# VisualStudioCode rules
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# TortoiseGit rules
+# Project-level settings
+/.tgitconfig
+
+*.bak
+*.gho
+*.ori
+*.orig
+*.tmp
+*.orig
+*.rej
+*.patch
+*.diff
+*.mp4
+*.pdf

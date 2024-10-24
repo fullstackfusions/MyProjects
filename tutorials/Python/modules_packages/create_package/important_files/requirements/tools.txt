@@ -1,0 +1,3 @@
+-r tools/doc.txt
+-r tools/build.txt
+-r tools/test.txt

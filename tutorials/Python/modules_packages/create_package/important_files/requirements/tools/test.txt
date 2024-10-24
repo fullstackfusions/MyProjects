@@ -1,0 +1,13 @@
+mock
+pylint
+pytest
+pytest-bdd
+pytest-cov
+pytest-mock
+pytest-xdist
+pytest-pylint
+pytest-html
+pytest-benchmark
+pyenchant
+autopep8
+rbc-security    <-- this is secutiy certificate for enterprise packages
