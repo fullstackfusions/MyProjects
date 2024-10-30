@@ -2,6 +2,7 @@
 
 import os
 import logging
+from datetime import datetime, timezone
 from io import BytesIO
 from typing import Optional, Union, Any, Dict, List
 from botocore.config import Config as BotoConfig
@@ -27,7 +28,7 @@ class ObjectStorage:
             verify = True
         )
     
-    def list_objects(self, bucket_name: str, directory: str) -> Dict[Any, Any]:
+    def list_objects(self, bucket_name: str, directory: str = "") -> Dict[Any, Any]:
         return self._client.list_objects_v2(
             Bucket=bucket_name,
             Prefix=directory
@@ -59,6 +60,19 @@ class ObjectStorage:
                 "Objects": object_list
             }
         )
+
+    def delete_3days_old_objects(self, bucket_name: str):
+        response = self._client.list_objects_v2(Bucket=bucket_name)
+        for obj in response.get("Contents", []):
+            try:
+                if (datetime.now(timezone.utc) - obj["LastModified"]).days > 3:
+                    self._client.delete_object(
+                        Bucket=bucket_name,
+                        Key=obj["Key"]
+                    )
+                    logger.info(f"{obj["Key"]} deleted successfully.")
+            except:
+                logger.exception("Error deleting the object")
     
     def upload(self, bucket_name: str, object_key: str, object_data: BytesIO) -> Dict[Any, Any]:
         return self._client.upload_fileobj(
