@@ -24,10 +24,11 @@ Feel free to explore the projects, watch the corresponding videos on my YouTube 
 <a href="https://fullstackfusions.com" target="_blank" title="Visit my website"><img src="assets/logo.png" alt="Logo" height="30"></a>&nbsp;&nbsp;
 <a href="https://www.linkedin.com/in/fullstackfusions/" target="_blank" title="Connect with me on LinkedIn"><img src="assets/linkedin.png" alt="LinkedIn" height="30"></a>&nbsp;&nbsp;
 <a href="https://github.com/fullstackfusions" target="_blank" title="Check out my GitHub"><img src="assets/github.png" alt="GitHub" height="30"></a>&nbsp;&nbsp;
-<a href="https://www.youtube.com/@fullstackfusions-t4t" target="_blank" title="Subscribe to my YouTube channel"><img src="assets/youtube.png" alt="YouTube" height="30"></a>&nbsp;&nbsp;
+<a href="https://www.youtube.com/@fullstackfusions" target="_blank" title="Subscribe to my YouTube channel"><img src="assets/youtube.png" alt="YouTube" height="30"></a>&nbsp;&nbsp;
 <a href="https://www.instagram.com/fullstackfusions/" target="_blank" title="Follow me on Instagram"><img src="assets/instagram.png" alt="Instagram" height="30"></a>&nbsp;&nbsp;
 <a href="https://medium.com/@fullstackfusions" target="_blank" title="Read my blogs on Medium"><img src="assets/medium.png" alt="Medium" height="30"></a>&nbsp;&nbsp;
 <a href="https://dev.to/fullstackfusions" target="_blank" title="Read my blogs on Dev.to"><img src="assets/dev.png" alt="DevTo" height="30"></a>&nbsp;&nbsp;
+<a href="https://x.com/MIHIRZZ" target="_blank" title="Subscribe to my twitter"><img src="assets/x-twitter.png" alt="Twitter" height="30"></a>&nbsp;&nbsp;
 <a href="mailto:fullstackfusions@gmail.com" target="_blank" title="Send me an email"><img src="assets/email.png" alt="Email" height="30"></a>
 
 Thank you for visiting, and happy coding!
