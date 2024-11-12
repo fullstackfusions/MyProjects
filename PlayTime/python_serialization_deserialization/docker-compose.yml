@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Flask service (using Marshmallow)
+  flask_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    container_name: flask_service
+    ports:
+      - "5001:5000"   # Expose Flask on port 5000
+    networks:
+      - app-network
+
+  # FastAPI service (using Pydantic)
+  fastapi_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: fastapi_service
+    ports:
+      - "8000:8000"   # Expose FastAPI on port 8000
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

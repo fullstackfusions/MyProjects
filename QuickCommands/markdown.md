@@ -1,0 +1,5 @@
+- [Basic Syntax](https://www.markdownguide.org/basic-syntax/)
+- [Extended Syntax](https://www.markdownguide.org/extended-syntax/)
+- [Cheat Sheet: Adding Math Notation to Markdown](https://www.upyesp.org/posts/makrdown-vscode-math-notation/)
+- [Add UML & Other Diagrams to Markdown With PlantUML](https://www.upyesp.org/posts/makrdown-diagrams-plantuml/)
+- [Add Diagrams to Markdown Using Mermaid](https://www.upyesp.org/posts/makrdown-diagrams-mermaid/)

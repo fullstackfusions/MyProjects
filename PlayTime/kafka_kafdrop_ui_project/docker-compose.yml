@@ -1,0 +1,56 @@
+version: '3.8'
+
+x-common-service: &common-service
+  platform: "linux/x86_64"
+  build:
+    context: .
+    dockerfile: Dockerfile
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Internal listener for inter-container communication (e.g., Kafdrop, app)
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_LEADER_REBALANCE_ENABLE: "true"
+    depends_on:
+      - zookeeper
+
+  # A nice UI tool to see the produced messages into kafka
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    platform: linux/x86_64
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - kafka
+
+  app:
+    <<: *common-service
+    container_name: app
+    volumes:
+      - ./:/app
+    depends_on:
+      - kafka
+
