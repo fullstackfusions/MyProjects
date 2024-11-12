@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-pymongo
-passlib[bcrypt]
-pydantic
-python-jose[cryptography]
-streamlit
-PyJWT
-python-multipart
