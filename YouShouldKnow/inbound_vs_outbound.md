@@ -1,0 +1,1 @@
+Inbound rules control the traffic coming into your system from the network or the internet, aiming to block potentially harmful connections. Outbound rules manage the traffic leaving your system to the network or the internet, preventing potentially malicious software from sending data out.
