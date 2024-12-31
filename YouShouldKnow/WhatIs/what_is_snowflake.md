@@ -1,1 +1,0 @@
-Snowflake enables data storage, processing, and analytic solutions that are faster, easier to use, and far more flexible than traditional offerings. The Snowflake data platform is not built on any existing database technology or “big data” software platforms such as Hadoop.
