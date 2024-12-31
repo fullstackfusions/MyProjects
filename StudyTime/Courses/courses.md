@@ -1,3 +1,7 @@
+- [Courses:](#courses)
+    - [Subscribe + Free](#subscribe--free)
+    - [Free](#free)
+
 # Courses:
 
 ### Subscribe + Free
