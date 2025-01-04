@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Docker: Debug PythonApp1",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "remoteRoot": "app/src/PythonApp1/",
+                        "localRoot": "${workspaceFolder}/src/PythonApp1/"
+                    },
+                    {
+                        "remoteRoot": "app/src/Common/",
+                        "localRoot": "${workspaceFolder}/src/Common/"
+                    }
+                ],
+                "projectType": "general",
+                "jinja": true,
+                "justMyCode": false
+            }
+        }
+    ]
+}

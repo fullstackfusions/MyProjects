@@ -1,0 +1,75 @@
+# docker-compose.yml file example to keep kafka server running
+
+version: '3.8'
+
+x-common-service: &common-service
+  platform: "linux/x86_64"
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      USERNAME: ${vault_username}
+      PASSWORD: ${vault_password} # this are username and password that Dockerfile will use and defining this way will automatically fetched from .env file
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092, EXTERNAL://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT, EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_AUTO_LEADER_REBALANCE_ENABLE: "true"
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: no
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - kafka
+
+  app_1:
+    <<: *common-service
+    command: app1 # module name if you have docker-entrypoint.sh file
+    # command: python app1.py   # if you just want to call file
+    container_name: app1
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+      - .env.second
+    depends_on:
+      - kafka1
+
+  app_2:
+    <<: *common-service
+    command: app2 # module name if you have docker-entrypoint.sh file
+    # command: python app1.py   # if you just want to call file
+    container_name: app2
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+      - .env.second
+    depends_on:
+      - kafka1

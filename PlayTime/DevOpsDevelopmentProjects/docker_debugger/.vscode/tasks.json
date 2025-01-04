@@ -1,0 +1,70 @@
+{
+    //see https://go.microsoft.com/fwlink/?LinkId=733558
+    //for more documentation about tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build"
+            ],
+            "dockerRun": {
+                "containerName": "${workspaceFolderBasename}-debug",
+                "image": "${workspaceFolderBasename}:latest",
+                "volumes": [
+                    {
+                        "containerPath": "app/src/PythonApp1/",
+                        "localPath": "${workspaceFolder}/src/PythonApp1/"
+                    },
+                    {
+                        "containerPath": "app/src/Common/",
+                        "localPath": "${workspaceFolder}/src/Common/"
+                    }
+                ],
+                "env": {
+                    "PYTHONPATH": "/app",
+                },
+                "envFiles": [
+                    ".env",
+                    ".env.second"
+                ],
+                "ports": [
+                    {
+                        "containerPort": 8000,
+                        "hostPort": 8000,
+                        "protocol": "tcp"
+                    }
+                ],
+                "remove": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "python": {
+                "module": "PythonApp1"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build",
+            "dockerBuild": {
+                "platform": "linux/x86_64",
+                "pull": true,
+                "context": "${workspaceFolder}",
+                "dockerfile": "${workspaceFolder}/Dockerfile",
+                "buildArgs": {
+                    "INDEX": "SOME_API_CALL_IF_WANTED"
+                },
+                "customOptions": "CUSTOM OPTIONS IF WANTED",
+                "tag": "${workspaceFolderBasename}:latest"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOCKER_BUILDKIT": "1"
+                }
+            }
+        }
+    ]
+}
