@@ -1,0 +1,12 @@
+pypdf
+langchain
+torch
+accelerate
+bitsandbytes
+transformers
+sentence_transformers
+faiss-cpu
+ctransformers
+
+streamlit
+streamlit-chat  # For chat interface components
