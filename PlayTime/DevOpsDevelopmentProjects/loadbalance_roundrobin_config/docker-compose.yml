@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  caddy1:
+    image: caddy
+    container_name: caddy1
+    networks:
+      - caddytest
+    volumes:
+      - ./index1.html:/usr/share/caddy/index.html
+    restart: unless-stopped
+
+  caddy2:
+    image: caddy
+    container_name: caddy2
+    networks:
+      - caddytest
+    volumes:
+      - ./index2.html:/usr/share/caddy/index.html
+    restart: unless-stopped
+
+  load_balancer:
+    build: .
+    container_name: caddy_load_balancer
+    networks:
+      - caddytest
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+networks:
+  caddytest:
+    driver: bridge

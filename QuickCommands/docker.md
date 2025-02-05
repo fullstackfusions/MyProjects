@@ -22,4 +22,25 @@ sudo docker images -a # to see all images
 sudo docker container ls -a # to see all containers
 
 sudo docker ps  # to see all the running containers
+
+docker exec CONTAINER_ID <command> -ltnp  # allows to execute a command in a running container, i.e. netstat, ls
+
+# Live Shell
+docker exec -it CONTAINER_ID /bin/sh    # -i -> makes the exec command interactive, -t -> gives us a tty keyboard interface
+
+# running multiple containers
+docker run -d -p XX:80 docker/getting-started # In the -p XX:YY flag, the XX is the host port, while YY is the port within the container.
+# XX -> can be replaced by different port e.g. 81, 82, 83
+# for different port the containers will run to that port e.g http://localhost:81, http://localhost:82, http://localhost:83
+
+# set some limitation like no network for containers. - best security practices
+docker run -d --network none docker/getting-started # --network none -> will break the network access
+# now if you will run ping google.com then it will not be able to access google.
+docker exec CONTAINER_ID ping google.com -W 2
+
+# Without network limitation
+docker exec CONTAINER_ID ping google.com -W 2   # it will be able to access google.
+
+docker network ls # You can see all the networks
+
 ```
