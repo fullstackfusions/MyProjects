@@ -9,6 +9,7 @@
   - [Ansible:](#ansible)
   - [Terraform:](#terraform)
   - [Elasticsearch:](#elasticsearch)
+  - [Loadbalancer](#loadbalancer)
 - [Cloud:](#cloud)
 - [Data Engineering:](#data-engineering)
 - [Machine Learning:](#machine-learning)
@@ -51,11 +52,15 @@
 
 - [A full stack app (beginners) with Elasticsearch](https://dev.to/lisahjung/beginners-guide-to-building-a-full-stack-app-nodejs-react-with-elasticsearch-5347)
 
+## Loadbalancer
+- [Types of Load balancing algorithms](https://www.cloudflare.com/learning/performance/types-of-load-balancing-algorithms/)
+
 # Cloud:
 
 # Data Engineering:
 
 - [7 Projects to Master Data Engineering](https://www.kdnuggets.com/7-projects-master-data-engineering)
+- [Apache Flink Ecosystem: 2025](https://www.linkedin.com/posts/stav-elkayam_apacheflink-kafka-filesystem-activity-7292887948646060032-Czn4)
 
 # Machine Learning:
 
