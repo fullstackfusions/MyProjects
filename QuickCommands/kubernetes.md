@@ -1,5 +1,50 @@
 Here’s a list of the most useful Kubernetes (`kubectl`) commands that are commonly used for managing Kubernetes clusters, deployments, services, pods, and more.
 
+### **For Local Environment Testing Create a cluster**
+1. **Starting a local cluster**
+
+```bash
+minikube start
+```
+
+2. **Stopping the cluster**
+
+```bash
+minikube stop
+```
+
+3. **Deleting the cluster (if needed)**
+
+```bash
+minikube delete
+```
+
+4. **Accessing a service via Minikube**
+
+```bash
+minikube service <service-name> --url
+```
+
+5. **Opening Kubernetes Dashboard**
+
+```bash
+minikube dashboard
+```
+
+6. **Enabling Kubernetes addons (like Ingress, Metrics Server)**
+
+```bash
+minikube addons enable <addon-name>
+```
+
+### For Production cluster will be full-managed or self-managed
+examples are
+1. AWS EKS
+2. Google GKE
+3. Azure AKS
+4. OpenShift
+5. self-managed Kubernetes
+
 ### **Basic Commands**
 
 1. **Check Cluster Info**
