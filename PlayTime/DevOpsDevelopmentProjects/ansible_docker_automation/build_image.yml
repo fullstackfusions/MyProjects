@@ -5,7 +5,7 @@
       community.docker.docker_image:
         name: go-app
         build:
-          path: "/Users/mihirzz/Codes/mihirzzsolutions/MyProjects/PlayTime/DevOpsDevelopmentProjects/ansible_docker_automation/roles/app_deploy/files"
+          path: # <path to go application files, docker file>
         source: build
       environment:
         DOCKER_HOST: "unix:///var/run/docker.sock"
