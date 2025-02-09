@@ -1,0 +1,12 @@
+- name: Test Docker Build with Ansible
+  hosts: localhost
+  tasks:
+    - name: Build Docker Image
+      community.docker.docker_image:
+        name: go-app
+        build:
+          path: "/Users/mihirzz/Codes/mihirzzsolutions/MyProjects/PlayTime/DevOpsDevelopmentProjects/ansible_docker_automation/roles/app_deploy/files"
+        source: build
+        force_source: false
+      environment:
+        DOCKER_HOST: "unix:///var/run/docker.sock"
