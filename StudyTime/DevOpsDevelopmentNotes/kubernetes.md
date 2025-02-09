@@ -3,7 +3,8 @@
 YouTube Videos:
 - [Kubernetes In One Shot by TrainWithShubham](https://youtu.be/W04brGNgxN4?si=QHS3GvB6dDPBbz29)
 
-##
+Best Website to learn Kubernetes:
+`Boot.dev`
 
 ## Minikube vs. Prod
 Minikube is a great tool for learning Kubernetes, but it’s not a production-scale Kubernetes cluster. The primary difference is that Minikube runs a single-node cluster, whereas production clusters are multi-node distributed systems.
