@@ -1,0 +1,20 @@
+- name: Run Go Application Container
+  hosts: localhost
+  tasks:
+    - name: Stop and Remove Existing Container (if exists)
+      community.docker.docker_container:
+        name: go_app_container
+        state: absent
+      environment:
+        DOCKER_HOST: "unix:///var/run/docker.sock"
+
+    - name: Run Go Application Container
+      community.docker.docker_container:
+        name: go_app_container
+        image: go-app
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+      environment:
+        DOCKER_HOST: "unix:///var/run/docker.sock"
