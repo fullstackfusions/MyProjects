@@ -1,0 +1,37 @@
+version: '3.8'
+
+networks:
+  app-network:
+    name: app-network  # Explicitly set network name
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ../backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend

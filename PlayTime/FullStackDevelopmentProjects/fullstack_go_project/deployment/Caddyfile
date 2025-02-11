@@ -1,0 +1,10 @@
+{
+    email fullstackfusions@gmail.com
+}
+
+localhost:80 {  # Explicitly force HTTP only
+    reverse_proxy /greet backend:8080  # Use service name 'backend'
+    reverse_proxy /* frontend:80 {      # Use service name 'frontend'
+        header_up Host {host}
+    }
+}
