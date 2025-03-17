@@ -1,0 +1,413 @@
+import os
+from typing import TypedDict, Annotated, Literal, List, Optional, Union, Type, Dict, Any
+import operator
+import json
+import yaml
+from pathlib import Path
+from enum import Enum, auto, unique
+
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langgraph.graph import StateGraph, START, END
+from langchain_core.tools import BaseTool
+from langchain_core.callbacks import CallbackManagerForToolRun
+from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import Runnable, RunnablePassthrough, RunnableLambda
+from langchain_core.runnables.config import RunnableConfig
+
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key-here"
+
+# Response Types and Models (unchanged)
+@unique
+class ResponseType(Enum):
+    UNDEFINED = auto()
+    TEXT = auto()
+    TEMPLATE = auto()
+    FORM = auto()
+
+class Response(BaseModel):
+    response_type: ResponseType = Field(default=ResponseType.UNDEFINED)
+
+class TextResponse(BaseModel):
+    text: str
+    markdown: bool
+    response_type: ResponseType = Field(default=ResponseType.TEXT)
+
+class TemplateResponse(BaseModel):
+    text: str
+    template: str
+    template_data: Union[list, Dict[str, Any]]
+    response_type: ResponseType = Field(default=ResponseType.TEMPLATE)
+
+class FormResponse(BaseModel):
+    text: str
+    form: str
+    form_data: Union[list, Dict[str, Any]]
+    response_type: ResponseType = Field(default=ResponseType.FORM)
+
+# Tool Inputs and Tools (unchanged)
+class CalculatorInput(BaseModel):
+    a: int = Field(description="first number")
+    b: int = Field(description="second number")
+
+class MultiplierInput(BaseModel):
+    a: int = Field(description="first number")
+    b: int = Field(description="second number")
+
+class ResearchInput(BaseModel):
+    topic: str = Field(description="topic to research")
+
+class ACIFabricsInput(BaseModel):
+    fabric_name: Optional[str] = Field(default="name of the fabric")
+
+class GreetingsInput(BaseModel):
+    greeting: str = Field(description="The greeting to respond to")
+
+class IntroductionInput(BaseModel):
+    context: Optional[str] = Field(default="general", description="Context for the introduction")
+
+class CalculatorTool(BaseTool):
+    name: str = "Calculator"
+    description: str = "Adds two numbers"
+    args_schema: Type[BaseModel] = CalculatorInput
+    return_direct: bool = True
+
+    def _run(self, a: int, b: int, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        result = a + b
+        return TextResponse(text=f"Sum: {result}", markdown=False).model_dump_json()
+
+class MultiplierTool(BaseTool):
+    name: str = "Multiplier"
+    description: str = "Multiplies two numbers"
+    args_schema: Type[BaseModel] = MultiplierInput
+    return_direct: bool = True
+
+    def _run(self, a: int, b: int, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        result = a * b
+        return TextResponse(text=f"Product: {result}", markdown=False).model_dump_json()
+
+class ResearchTool(BaseTool):
+    name: str = "Research"
+    description: str = "Performs research on a topic"
+    args_schema: Type[BaseModel] = ResearchInput
+    return_direct: bool = True
+
+    def _run(self, topic: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        result = f"Research on {topic}: got insights"
+        return TemplateResponse(text="Research completed", template="research_template", template_data=result).model_dump_json()
+
+class ACIFabricsTool(BaseTool):
+    name: str = "ACIFabrics"
+    description: str = "Gets ACI fabrics device info"
+    args_schema: Type[BaseModel] = ACIFabricsInput
+    return_direct: bool = True
+
+    def _run(self, fabric_name: Optional[str], run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        result = "ACI fabric networks info" if not fabric_name else f"Filtered ACI info for {fabric_name}"
+        return FormResponse(text="ACI query result", form="aci_fabric_form", form_data=result).model_dump_json()
+
+class GreetingsTool(BaseTool):
+    name: str = "Greetings"
+    description: str = "Responds to user greetings"
+    args_schema: Type[BaseModel] = GreetingsInput
+    return_direct: bool = True
+
+    def _run(self, greeting: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        return TextResponse(text=f"Hello! How can I assist you today?", markdown=False).model_dump_json()
+
+class IntroductionTool(BaseTool):
+    name: str = "Introduction"
+    description: str = "Provides an introduction to the chatbot's capabilities"
+    args_schema: Type[BaseModel] = IntroductionInput
+    return_direct: bool = True
+
+    def _run(self, context: Optional[str], run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+        intro = "I'm a chatbot designed to help with math calculations (addition, multiplication), research topics, and ACI fabrics info. Ask me anything related to these areas!"
+        return TextResponse(text=intro, markdown=False).model_dump_json()
+
+
+# Assuming these tools are already defined as in your original code
+math_tools = [CalculatorTool(), MultiplierTool()]
+research_tools = [ResearchTool()]
+network_tools = [ACIFabricsTool()]
+general_tools = [GreetingsTool(), IntroductionTool()]
+
+# Define a class to hold agent information
+class AgentInfo:
+    def __init__(self, name: str, description: str, tools: List[BaseTool]):
+        self.name = name
+        self.description = description
+        self.tools = tools
+
+# Define the AGENT_REGISTRY
+AGENT_REGISTRY: Dict[str, AgentInfo] = {
+    "math": AgentInfo(
+        name="math",
+        description="Handles mathematical operations",
+        tools=math_tools
+    ),
+    "research": AgentInfo(
+        name="research",
+        description="Handles research-related queries",
+        tools=research_tools
+    ),
+    "network": AgentInfo(
+        name="network",
+        description="Handles network-related queries, specifically ACI fabrics",
+        tools=network_tools
+    ),
+    "general": AgentInfo(
+        name="general",
+        description="Handles greetings and general inquiries",
+        tools=general_tools
+    )
+}
+
+
+# Define format_agent_info
+def format_agent_info(registry: Dict[str, AgentInfo]) -> str:
+    lines = []
+    for agent in registry.values():
+        lines.append(f"\n- \"{agent.name}\": {agent.description}")
+        lines.append("  * Tools:")
+        for tool in agent.tools:
+            lines.append(f"\n    - {tool.name}: {tool.description}")
+            lines.append(f"    - Exepected Arguments:")
+            for arg, description in tool.args.items():
+                lines.append(f"      - {arg}: {description}")
+    return "\n".join(lines)
+
+
+# General Agent Definition (unchanged)
+class CustomToolException(Exception):
+    def __init__(self, message: AIMessage, exception: Exception):
+        super().__init__(str(exception))
+        self.message = message
+        self.exception = exception
+
+def execute_tools(message: AIMessage, config: RunnableConfig = None) -> str:
+    if not message.tool_calls:
+        return message.content
+
+    tool_call = message.tool_calls[0]
+    tool_name = tool_call["name"]
+    tool_args = tool_call["args"]
+
+    tool = next((t for t in general_tools if t.name == tool_name), None)
+    if not tool:
+        raise ValueError(f"Tool {tool_name} not found")
+
+    tool_executor = RunnableLambda(lambda args: tool.invoke(args)).with_retry(
+        stop_after_attempt=3,
+        wait_exponential_jitter=True,
+        wait_exponential_multiplier=1,
+        wait_exponential_max=10
+    )
+
+    try:
+        return tool_executor.invoke(tool_args, config=config)
+    except Exception as e:
+        raise CustomToolException(message=message, exception=e)
+
+def handle_tool_failure(inputs: dict) -> dict:
+    exception = inputs["exception"]
+    tool_call = exception.message.tool_calls[0]
+
+    messages = [
+        AIMessage(content="", tool_calls=[tool_call]),
+        ToolMessage(
+            tool_call_id=tool_call["id"],
+            content=f"Tool error after retries: {str(exception.exception)}"
+        ),
+        HumanMessage(
+            content="The previous tool call failed after multiple attempts. Please try with corrected arguments."
+        )
+    ]
+
+    return {"input": inputs["input"], "last_output": messages}
+
+
+
+# Define LLM
+llm = ChatOpenAI(model="gpt-4o", temperature=0)
+
+general_prompt = ChatPromptTemplate.from_messages([("human", "{input}"), MessagesPlaceholder("last_output", optional=True)])
+general_llm = llm.bind_tools(general_tools)
+base_chain: Runnable = (
+    general_prompt
+    | general_llm
+    | RunnableLambda(lambda msg, config=None: execute_tools(msg, config=config))
+)
+
+
+general_agent = base_chain.with_fallbacks(
+    fallbacks=[
+        RunnablePassthrough.assign(exception=lambda x: x["exception"])
+        | handle_tool_failure
+        | base_chain
+    ],
+    exception_key="exception"
+)
+
+math_agent = "similar to general agent setup"
+research_agent = "similar to general agent setup"
+network_agent = "similar to general agent setup"
+
+# State Definition
+class WorkflowState(TypedDict):
+    query: str
+    current_sub_agent: Annotated[Optional[Literal["math", "research", "network", "general"]], "Current sub-agent handling the task"]
+    results: Annotated[List[str], operator.add]
+    fulfilled: Annotated[Optional[bool], "Whether the query is complete"]
+    iteration: Annotated[int, "Current iteration count"]
+    max_iterations: Annotated[int, "Maximum allowed iterations"]
+    agent_metadata: Annotated[Dict[str, Any], "Metadata about available agents and their tools"]
+
+
+
+# Central Agent Prompt and Node
+CENTRAL_PROMPT_TEMPLATE = ChatPromptTemplate.from_messages([
+        ("system", """
+    You are a Central Agent managing multiple sub-agents. Here’s the list of available sub-agents and their tools:
+
+    {agent_info}
+
+    Your task:
+    1. Given the user query and current results, decide which sub-agent should handle the query ("math", "research", "network", "general", or "none" if unknown or complete).
+    2. Determine if the query is fulfilled (true if results fully answer it, false if it needs processing).
+
+    Query: {query}
+    Current Results: {results}
+
+    Return a JSON object with "sub_agent" and "fulfilled" keys.
+        """)
+])
+
+
+def central_agent_node(state: WorkflowState) -> WorkflowState:
+    if state["iteration"] > state["max_iterations"]:
+        return {
+            "results": state["results"] + ["Max iterations reached. Could not fully process query."],
+            "fulfilled": True,
+            "iteration": state["iteration"]
+        }
+
+    if state["fulfilled"]:
+        return state
+
+
+    # Agent prompting
+    agent_info = format_agent_info(AGENT_REGISTRY)
+    formatted_prompt = CENTRAL_PROMPT_TEMPLATE.format(
+        agent_info=agent_info,
+        query=state["query"],
+        results=json.dumps(state["results"])
+    )
+
+    messages = [formatted_prompt]
+    response = llm.invoke(messages)
+    decision = json.loads(response.content)
+
+    return {
+        "current_sub_agent": decision["sub_agent"] if decision["sub_agent"] != "none" else None,
+        "fulfilled": decision["fulfilled"],
+        "iteration": state["iteration"] + 1
+    }
+
+# Sub-Agent Node (unchanged)
+def sub_agent_node(state: WorkflowState) -> WorkflowState:
+    sub_agent = state["current_sub_agent"]
+    config = RunnableConfig(max_concurrency=5, recursion_limit=10)
+
+    input_data = {"query": state["query"], "last_output": state.get("last_output", [])}
+
+    if sub_agent == "math":
+        response = math_agent.invoke(input_data, config=config)
+    elif sub_agent == "research":
+        response = research_agent.invoke(input_data, config=config)
+    elif sub_agent == "network":
+        response = network_agent.invoke(input_data, config=config)
+    elif sub_agent == "general":
+        response = general_agent.invoke(input_data, config=config)
+    else:
+        return state
+
+    if isinstance(response, str):
+        return {"results": [response]}
+    elif response.tool_calls:
+        tool_call = response.tool_calls[0]
+        tool_name = tool_call["name"]
+        tool_args = tool_call["args"]
+        tool = next(t for t in (math_tools + research_tools + network_tools + general_tools) if t.name == tool_name)
+        tool_output = tool.invoke(tool_args)
+        return {"results": [tool_output]}
+    else:
+        return {"results": [TextResponse(text=response.content, markdown=False).model_dump_json()]}
+
+def route_after_central(state: WorkflowState) -> str:
+    if state["fulfilled"]:
+        return END
+    elif state["current_sub_agent"]:
+        return "sub_agent"
+    else:
+        state["results"] = state["results"] + ["I don't know how to handle this query."]
+        state["fulfilled"] = True
+        return END
+
+# Build and Compile Graph
+workflow = StateGraph(WorkflowState)
+workflow.add_node("central_agent", central_agent_node)
+workflow.add_node("sub_agent", sub_agent_node)
+workflow.set_entry_point("central_agent")
+workflow.add_conditional_edges("central_agent", route_after_central, {"sub_agent": "sub_agent", END: END})
+workflow.add_edge("sub_agent", "central_agent")
+app = workflow.compile()
+
+# Run Query and Load Response
+def run_query(query: str) -> Union[Response, List[Response]]:
+    initial_state = {
+        "query": query,
+        "current_sub_agent": None,
+        "results": [],
+        "fulfilled": False,
+        "iteration": 0,
+        "max_iterations": 5,
+        "agent_metadata": {name: info.to_dict() for name, info in AGENT_REGISTRY.items()}
+    }
+    result = app.invoke(initial_state)
+    return load_response(result["results"])
+
+def load_response(json_list: List[str]) -> Union[Response, List[Response]]:
+    if not json_list:
+        return json_list
+
+    response_mapping = {
+        ResponseType.TEXT.value: TextResponse,
+        ResponseType.TEMPLATE.value: TemplateResponse,
+        ResponseType.FORM.value: FormResponse,
+    }
+
+    responses = []
+    for json_str in json_list:
+        data = json.loads(json_str)
+        response_type = data.get("response_type")
+        model_cls = response_mapping.get(response_type, Response)
+        responses.append(model_cls.model_validate_json(json_str))
+
+    return responses if len(responses) > 1 else responses[0]
+
+# Example Usage
+if __name__ == "__main__":
+    queries = [
+        "Hello",
+        "What is 2 + 3?",
+        "Research about AI",
+        "Get ACI fabrics info for fabric1",
+        "What’s the weather like?"
+    ]
+
+    for query in queries:
+        print(f"Query: {query}")
+        output = run_query(query)
+        print(f"Output: {json.dumps(output.model_dump() if isinstance(output, BaseModel) else [o.model_dump() for o in output], indent=2)}\n")

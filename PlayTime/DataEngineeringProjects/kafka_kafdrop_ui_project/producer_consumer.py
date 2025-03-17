@@ -69,7 +69,7 @@ from confluent_kafka import Consumer, KafkaError, Producer, KafkaException
 
 logger = logging.getLogger(__name__)
 
-topic = "test-topic"
+topic = "test-topic"    # You will have to create a topic, refer README.md step 2
 
 # script for consumer
 common_kafka_options = {
