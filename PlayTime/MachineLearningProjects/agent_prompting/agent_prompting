@@ -169,10 +169,13 @@ AGENT_REGISTRY: Dict[str, AgentInfo] = {
 def format_agent_info(registry: Dict[str, AgentInfo]) -> str:
     lines = []
     for agent in registry.values():
-        lines.append(f"- \"{agent.name}\": {agent.description}")
+        lines.append(f"\n- \"{agent.name}\": {agent.description}")
         lines.append("  * Tools:")
         for tool in agent.tools:
-            lines.append(f"    - {tool.name}: {tool.description}")
+            lines.append(f"\n    - {tool.name}: {tool.description}")
+            lines.append(f"    - Exepected Arguments:")
+            for arg, description in tool.args.items():
+                lines.append(f"      - {arg}: {description}")
     return "\n".join(lines)
 
 
