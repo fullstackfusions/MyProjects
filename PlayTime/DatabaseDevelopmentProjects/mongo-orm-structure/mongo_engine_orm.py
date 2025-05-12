@@ -1,12 +1,17 @@
+import logging
+import hashlib
+from datetime import timezone
 from typing import Dict, Optional, List, Any
 from enum import Enum, unique, auto
-from mongoengine import Document, StringField, DateTimeField, connect, EnumField
+from mongoengine import Document, StringField, DateTimeField, connect, EnumField, NotUniqueError
 from datetime import datetime
 from marshmallow import Schema
-from marshmallow_dataclass import dataclass
+from marshmallow_dataclass import dataclass, add_schema
 from dataclasses import field
 import json
 
+
+logger = logging.getLogger(__name__)
 
 # Defining Enum
 @unique
@@ -90,13 +95,13 @@ class Caches(Document):
     hashed_request = StringField(required=True, unique=True)
     response_data = StringField(required=True)  # Stores JSON string
     response_type = EnumField(required=True)
-    timestamp = DateTimeField(default=datetime.utcnow)
+    timestamp = DateTimeField(default=timezone.utc)
     meta = {
         'indexes': [
             '#hashed_request',  # hashed index  there other types in documentation
             {
                 'fields': ['hashed_request', 'response_data', 'response_type', 'timestamp'],
-                'expireAfterSeconds': 300   # ttl index
+                'expireAfterSeconds': 30   # ttl index
             }
         ]
     }
@@ -104,13 +109,13 @@ class Caches(Document):
 # Defining the mongoengine schema to check duplicates
 class Requests(Document):
     hashed_request = StringField(required=True, unique=True)
-    timestamp = DateTimeField(default=datetime.utcnow)
+    timestamp = DateTimeField(default=timezone.utc)
     meta = {
         'indexes': [
             '#hashed_request',  # hashed index  there other types in documentation
             {
                 'fields': ['hashed_request', 'timestamp'],
-                'expireAfterSeconds': 100   # ttl index
+                'expireAfterSeconds': 10   # ttl index
             }
         ]
     }
@@ -119,13 +124,13 @@ class Requests(Document):
 # Defining the mongoengine schema to lock the duplicate request to avoid chatbot instance trigger
 class Locks(Document):
     request_hash = StringField(required=True, unique=True)
-    timestamp = DateTimeField(default=datetime.utcnow)
+    timestamp = DateTimeField(default=timezone.utc)
     meta = {
         'indexes': [
             '#hashed_request',  # hashed index  there other types in documentation
             {
                 'fields': ['request_hash', 'timestamp'],
-                'expireAfterSeconds': 100   # ttl index
+                'expireAfterSeconds': 10   # ttl index
             }
         ]
     }
@@ -149,29 +154,28 @@ class MongoDBCacheManager:
         logger.info("Daatabase connected")
 
     def _generate_hash(self, request, user_id = None, room_id=None):
-        if user_id:
-            request_dict = {room_id: {user_id: request}}
-        else:
-            request_dict = request
-        return hashlib.sha256(json.dumps(request_dict), sort_keys=True).encode().hexdigest()
+        if user_id and room_id:
+            request = (room_id, user_id, request)
+
+        return hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
 
     def cache_response(self, request: Request, response: Response):
         # Assuming response is a single dataclass instance for simplicity
-        schema = request.Schema()
+        # schema = request.Schema()
         serialized_request = schema.dumps(request)
-        hashed_request = self._generate_hash(serialized_request)
+        # hashed_request = self._generate_hash(serialized_request)
 
         schema = response.Schema()
         serialized_response = schema.dumps(response)
 
-        cache_entry = Cache(request_hash=serialized_request, response_data=serialized_response, response_type=response.response_type).save()
+        cache_entry = Caches(request_hash=serialized_request, response_data=serialized_response, response_type=response.response_type).save()
 
     def get_cached_response(self, request: Request):
         schema = request.Schema()
         serialized_request = schema.dumps(request)
         hashed_request = self._generate_hash(serialized_request)
 
-        cache_entry = Caches.objects(request_hash=request_hash).first()
+        cache_entry = Caches.objects(request_hash=hashed_request).first()
 
         if not cache_entry:
             return None
@@ -185,13 +189,16 @@ class MongoDBCacheManager:
                     responses.append(schema.loads(cache_entry.response_data))
         return responses
 
-    def is_duplicate_request(self, user_id: str, request: Request) -> bool:
+    def is_duplicate_request(self, user_id: str, room_id: str, request: Request) -> bool:
         """
         Check if the given request hash for a user is a duplicate.
         Returns True if it's a duplicate, False otherwise.
         """
         try:
-            Requests(user_id=user_id, request_hash=request_hash).save()
+            schema = request.Schema()
+            serialized_request = schema.dumps(request)
+            hashed_request = self._generate_hash(serialized_request, user_id=user_id, room_id=room_id)
+            Requests(request_hash=hashed_request).save()
             return False  # Not a duplicate if save succeeds
         except NotUniqueError:
             return True  # Duplicate request
