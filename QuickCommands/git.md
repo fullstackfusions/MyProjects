@@ -74,6 +74,31 @@ git merge <branch-name> # Merges the specified branch into the current branch.
 git branch -d <branch-name> # Deletes a branch (only if it has been merged).
 ```
 
+
+#### **To switch to a remote branch after cloning the repository locally, follow these steps**:
+
+1. **List all remote branches:**
+
+   ```bash
+   git branch -r
+   ```
+
+   This will show you branches like:
+   ```
+   origin/main
+   origin/your-branch-name
+   ```
+
+2. **Create a local tracking branch:**
+
+   If your remote branch is named `feature-x`, run:
+
+   ```bash
+   git checkout -b feature-x origin/feature-x
+   ```
+
+   This creates a local branch `feature-x` tracking the remote one.
+
 ---
 
 ### **Remote Repository Management**
