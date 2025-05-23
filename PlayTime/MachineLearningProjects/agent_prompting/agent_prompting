@@ -320,30 +320,18 @@ def sub_agent_node(state: WorkflowState) -> WorkflowState:
     sub_agent = state["current_sub_agent"]
     config = RunnableConfig(max_concurrency=5, recursion_limit=10)
 
-    input_data = {"query": state["query"], "last_output": state.get("last_output", [])}
-
     if sub_agent == "math":
-        response = math_agent.invoke(input_data, config=config)
+        response = math_agent.invoke(dict(input=state["query"]), config=config)
     elif sub_agent == "research":
-        response = research_agent.invoke(input_data, config=config)
+        response = research_agent.invoke(dict(input=state["query"]), config=config)
     elif sub_agent == "network":
-        response = network_agent.invoke(input_data, config=config)
+        response = network_agent.invoke(dict(input=state["query"]), config=config)
     elif sub_agent == "general":
-        response = general_agent.invoke(input_data, config=config)
+        response = general_agent.invoke(dict(input=state["query"]), config=config)
     else:
         return state
 
-    if isinstance(response, str):
-        return {"results": [response]}
-    elif response.tool_calls:
-        tool_call = response.tool_calls[0]
-        tool_name = tool_call["name"]
-        tool_args = tool_call["args"]
-        tool = next(t for t in (math_tools + research_tools + network_tools + general_tools) if t.name == tool_name)
-        tool_output = tool.invoke(tool_args)
-        return {"results": [tool_output]}
-    else:
-        return {"results": [TextResponse(text=response.content, markdown=False).model_dump_json()]}
+    return {"results": [response]}
 
 def route_after_central(state: WorkflowState) -> str:
     if state["fulfilled"]:
