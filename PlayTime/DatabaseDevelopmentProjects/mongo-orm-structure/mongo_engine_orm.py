@@ -202,3 +202,20 @@ class MongoDBCacheManager:
             return False  # Not a duplicate if save succeeds
         except NotUniqueError:
             return True  # Duplicate request
+
+    def acquire_lock(self, event_id: str) -> bool:
+        """
+        Acquire a lock for the given request hash for a user.
+        Returns True if the lock was acquired, False if it was already locked.
+        """
+        try:
+            Locks(request_hash=event_id).save()
+            return True  # Lock acquired successfully
+        except NotUniqueError:
+            return False
+
+    def release_lock(self, event_id: str) -> None:
+        """
+        Release the lock for the given request hash for a user.
+        """
+        Locks.objects(request_hash=event_id).delete()
