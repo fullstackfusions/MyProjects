@@ -4,6 +4,12 @@
 [Class patterns](#class-patterns)
 [Multithreading and multiprocessing](#multithreading-and-multiprocessing)
 
+
+https://blog.algomaster.io/p/how-to-answer-a-lld-interview-problem
+https://blog.algomaster.io/p/singleton-design-pattern
+
+
+
 ### OOPS concepts
 
 ### SOLID principles
