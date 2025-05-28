@@ -1,0 +1,36 @@
+name: Generate OpenAPI Schema
+
+on:
+  push:
+    branches:
+      - main # or your desired branch
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  generate-openapi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate OpenAPI Schema
+        run: python generate_openapi.py
+
+      - name: Commit OpenAPI schema
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add openapi_schema.json
+          git commit -m "chore: update OpenAPI schema" || echo "No changes to commit"
+          git push
