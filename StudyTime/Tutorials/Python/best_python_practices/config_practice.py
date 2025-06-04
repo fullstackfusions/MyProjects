@@ -1,11 +1,13 @@
 # Configuration or fetching any environment variable approach:
 import logging
 import os
+import time
 import requests
+from typing import Dict, Any
 from dataclasses import field
 from marshmallow_dataclass import dataclass
 from mongoengine import connect
-from some_security_module import where  # this is for enterprise security ssl certificates
+
 
 @dataclass
 class OpenAIConfig:
@@ -24,7 +26,7 @@ class OpenAIConfig:
             "grant_type": "client_credentials",
             "scope": "read"
         }
-        oauth_token_response = requests.post(url=self.oauth_api, data=oauth_gen_data, headers=headers, verify=where())
+        oauth_token_response = requests.post(url=self.oauth_api, data=oauth_gen_data, headers=headers, verify=False)
         if oauth_token_response.ok:
             token_data = oauth_token_response.json()
             self._token = token_data["access_token"]
@@ -198,4 +200,3 @@ class Config:
     mongo: MongoConfig = field(default_factory=MongoConfig.from_env)
     email: EmailConfig = field(default_factory=EmailConfig.from_env)
     storage: StorageConfig = field(default_factory=StorageConfig.from_env)
-
