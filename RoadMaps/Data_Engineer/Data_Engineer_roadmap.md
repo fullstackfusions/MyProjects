@@ -212,5 +212,3 @@ Rather than solely “pipeline builder,” today’s Data Engineer is a **platfo
 2. **AI/ML Workflows**: feature stores, automated retraining, vector search.
 3. **Observability & Governance**: proactive quality checks and lineage.
 4. **Cross-Functional Leadership**: translating data needs into business impact.
-
-Follow this roadmap—build the suggested projects, master the tools, and evolve your role—so you emerge not just as an intermediate Data Engineer, but as a true data platform leader. Good luck, and happy building!
